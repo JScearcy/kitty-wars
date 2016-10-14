@@ -1,4 +1,4 @@
-app/elm-stuff
+elm-stuff
 .sass-cache
 scripts/**.js
 npm-debug.log

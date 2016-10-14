@@ -1,0 +1,20 @@
+{
+  "name": "kitty-wars",
+  "version": "1.0.0",
+  "description": "A small game for my son",
+  "main": "scripts/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "elm-make app/Main.elm --output scripts/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JScearcy/kitty-wars.git"
+  },
+  "author": "JakeS",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JScearcy/kitty-wars/issues"
+  },
+  "homepage": "https://github.com/JScearcy/kitty-wars#readme"
+}

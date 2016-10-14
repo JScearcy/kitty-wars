@@ -22,6 +22,13 @@ type alias Model =
     { character : Character
     , keyDown : Bool
     , arrow : Arrow
+    , map : Map
+    }
+
+
+type alias Map =
+    { width : Int
+    , height : Int
     }
 
 
@@ -54,12 +61,12 @@ type Arrow
 
 init : ( Model, Cmd Msg )
 init =
-    { character = characterInit, keyDown = False, arrow = Other } ! []
+    { character = characterInit, keyDown = False, arrow = Other, map = Map 1400 1040 } ! []
 
 
 characterInit : Character
 characterInit =
-    { location = Point 0 100, spriteFrame = (List.length spriteLocation - 1), spriteLocation = spriteLocation }
+    { location = Point 150 -50, spriteFrame = (List.length spriteLocation - 1), spriteLocation = spriteLocation }
 
 
 spriteLocation : List Point
@@ -81,16 +88,57 @@ update msg model =
                 { model | keyDown = False, arrow = arr, character = { char | spriteFrame = (List.length spriteLocation) - 1 } } ! []
 
         Tick time ->
-            let
-                char =
-                    model.character
-            in
-                { model | character = characterAnimate char } ! []
+            { model | character = characterAnimate model } ! []
 
 
-characterAnimate : Character -> Character
-characterAnimate char =
+moveCharacter : Model -> Character
+moveCharacter model =
+    let
+        char =
+            model.character
+
+        map =
+            model.map
+    in
+        case model.arrow of
+            Up ->
+                model.character
+
+            Down ->
+                model.character
+
+            Left ->
+                let
+                    newPoint =
+                        if model.character.location.x <= 100 then
+                            1450
+                        else
+                            char.location.x - 5
+                in
+                    { char | location = Point newPoint char.location.y }
+
+            Right ->
+                let
+                    newPoint =
+                        if model.character.location.x >= map.width then
+                            100
+                        else
+                            char.location.x + 5
+                in
+                    { char | location = Point newPoint char.location.y }
+
+            Other ->
+                model.character
+
+
+updateSpriteLocation : Character -> Character
+updateSpriteLocation char =
     { char | spriteFrame = List.length spriteLocation |> incrementSpriteFrame char.spriteFrame }
+
+
+characterAnimate : Model -> Character
+characterAnimate =
+    moveCharacter >> updateSpriteLocation
 
 
 incrementSpriteFrame : Int -> Int -> Int
@@ -123,10 +171,20 @@ view model =
     let
         char =
             model.character
+
+        locString =
+            pointToString char.location
     in
         div
-            [ class "character", style [ ( "background", imgHelper char.spriteLocation char.spriteFrame ), ( "height", "435px" ), ( "width", "287px" ), ( "left", "10px" ), ( "top", "-50px" ), ( "position", "absolute" ) ] ]
+            [ class "character", style [ ( "background", imgHelper char.spriteLocation char.spriteFrame ), ( "height", "435px" ), ( "width", "287px" ), ( "left", locString.x ), ( "top", locString.y ), ( "position", "absolute" ) ] ]
             []
+
+
+pointToString : Point -> { x : String, y : String }
+pointToString point =
+    { x = toString point.x ++ "px"
+    , y = toString point.y ++ "px"
+    }
 
 
 imgHelper : List Point -> Int -> String
