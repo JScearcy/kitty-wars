@@ -5,6 +5,9 @@
   background-repeat: no-repeat;
   background-size: cover; }
 
+.character {
+  transform: scale(0.2, 0.2); }
+
 html {
   width: 100%;
   height: 100%; }

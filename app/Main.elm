@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Html exposing (div, text, Html)
-import Html.Attributes exposing (style)
+import Html.Attributes exposing (style, class)
 import Html.App as App
 import Keyboard
 import Time exposing (Time, every, millisecond)
@@ -74,18 +74,27 @@ update msg model =
             { model | keyDown = True, arrow = arr } ! []
 
         KeyUp arr ->
-            { model | keyDown = False, arrow = arr } ! []
+            let
+                char =
+                    model.character
+            in
+                { model | keyDown = False, arrow = arr, character = { char | spriteFrame = (List.length spriteLocation) - 1 } } ! []
 
         Tick time ->
             let
-                _ =
-                    Debug.log "Time" time
+                char =
+                    model.character
             in
-                model ! []
+                { model | character = characterAnimate char } ! []
 
 
-incrementCharacterFrame : Int -> Int -> Int
-incrementCharacterFrame index arrLen =
+characterAnimate : Character -> Character
+characterAnimate char =
+    { char | spriteFrame = List.length spriteLocation |> incrementSpriteFrame char.spriteFrame }
+
+
+incrementSpriteFrame : Int -> Int -> Int
+incrementSpriteFrame index arrLen =
     if index + 1 >= arrLen then
         0
     else
@@ -105,7 +114,7 @@ subscriptions model =
             Sub.batch
                 [ Keyboard.downs keyDownHandlerMsg
                 , Keyboard.ups keyUpHandlerMsg
-                , every (250 * millisecond) Tick
+                , every (75 * millisecond) Tick
                 ]
 
 
@@ -116,7 +125,7 @@ view model =
             model.character
     in
         div
-            [ style [ ( "background", imgHelper char.spriteLocation char.spriteFrame ), ( "height", "435px" ), ( "width", "287px" ) ] ]
+            [ class "character", style [ ( "background", imgHelper char.spriteLocation char.spriteFrame ), ( "height", "435px" ), ( "width", "287px" ), ( "left", "10px" ), ( "top", "-50px" ), ( "position", "absolute" ) ] ]
             []
 
 

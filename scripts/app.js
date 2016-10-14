@@ -8624,6 +8624,7 @@ var _user$project$Main$view = function (model) {
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
 			[
+				_elm_lang$html$Html_Attributes$class('character'),
 				_elm_lang$html$Html_Attributes$style(
 				_elm_lang$core$Native_List.fromArray(
 					[
@@ -8633,44 +8634,18 @@ var _user$project$Main$view = function (model) {
 						_1: A2(_user$project$Main$imgHelper, $char.spriteLocation, $char.spriteFrame)
 					},
 						{ctor: '_Tuple2', _0: 'height', _1: '435px'},
-						{ctor: '_Tuple2', _0: 'width', _1: '287px'}
+						{ctor: '_Tuple2', _0: 'width', _1: '287px'},
+						{ctor: '_Tuple2', _0: 'left', _1: '10px'},
+						{ctor: '_Tuple2', _0: 'top', _1: '-50px'},
+						{ctor: '_Tuple2', _0: 'position', _1: 'absolute'}
 					]))
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[]));
 };
-var _user$project$Main$incrementCharacterFrame = F2(
+var _user$project$Main$incrementSpriteFrame = F2(
 	function (index, arrLen) {
 		return (_elm_lang$core$Native_Utils.cmp(index + 1, arrLen) > -1) ? 0 : (index + 1);
-	});
-var _user$project$Main$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
-			case 'KeyDown':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{keyDown: true, arrow: _p0._0}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'KeyUp':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{keyDown: false, arrow: _p0._0}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			default:
-				var _p1 = A2(_elm_lang$core$Debug$log, 'Time', _p0._0);
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					model,
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-		}
 	});
 var _user$project$Main$Model = F3(
 	function (a, b, c) {
@@ -8702,6 +8677,58 @@ var _user$project$Main$characterInit = {
 	spriteFrame: _elm_lang$core$List$length(_user$project$Main$spriteLocation) - 1,
 	spriteLocation: _user$project$Main$spriteLocation
 };
+var _user$project$Main$characterAnimate = function ($char) {
+	return _elm_lang$core$Native_Utils.update(
+		$char,
+		{
+			spriteFrame: A2(
+				_user$project$Main$incrementSpriteFrame,
+				$char.spriteFrame,
+				_elm_lang$core$List$length(_user$project$Main$spriteLocation))
+		});
+};
+var _user$project$Main$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'KeyDown':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{keyDown: true, arrow: _p0._0}),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			case 'KeyUp':
+				var $char = model.character;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{
+							keyDown: false,
+							arrow: _p0._0,
+							character: _elm_lang$core$Native_Utils.update(
+								$char,
+								{
+									spriteFrame: _elm_lang$core$List$length(_user$project$Main$spriteLocation) - 1
+								})
+						}),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			default:
+				var $char = model.character;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{
+							character: _user$project$Main$characterAnimate($char)
+						}),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+		}
+	});
 var _user$project$Main$Tick = function (a) {
 	return {ctor: 'Tick', _0: a};
 };
@@ -8722,8 +8749,8 @@ var _user$project$Main$Left = {ctor: 'Left'};
 var _user$project$Main$Down = {ctor: 'Down'};
 var _user$project$Main$Up = {ctor: 'Up'};
 var _user$project$Main$keyHandler = function (key) {
-	var _p2 = key;
-	switch (_p2) {
+	var _p1 = key;
+	switch (_p1) {
 		case 38:
 			return _user$project$Main$Up;
 		case 40:
@@ -8736,17 +8763,17 @@ var _user$project$Main$keyHandler = function (key) {
 			return _user$project$Main$Other;
 	}
 };
-var _user$project$Main$keyDownHandlerMsg = function (_p3) {
+var _user$project$Main$keyDownHandlerMsg = function (_p2) {
 	return _user$project$Main$KeyDown(
+		_user$project$Main$keyHandler(_p2));
+};
+var _user$project$Main$keyUpHandlerMsg = function (_p3) {
+	return _user$project$Main$KeyUp(
 		_user$project$Main$keyHandler(_p3));
 };
-var _user$project$Main$keyUpHandlerMsg = function (_p4) {
-	return _user$project$Main$KeyUp(
-		_user$project$Main$keyHandler(_p4));
-};
 var _user$project$Main$subscriptions = function (model) {
-	var _p5 = model.keyDown;
-	if (_p5 === false) {
+	var _p4 = model.keyDown;
+	if (_p4 === false) {
 		return _elm_lang$core$Platform_Sub$batch(
 			_elm_lang$core$Native_List.fromArray(
 				[
@@ -8759,7 +8786,7 @@ var _user$project$Main$subscriptions = function (model) {
 				[
 					_elm_lang$keyboard$Keyboard$downs(_user$project$Main$keyDownHandlerMsg),
 					_elm_lang$keyboard$Keyboard$ups(_user$project$Main$keyUpHandlerMsg),
-					A2(_elm_lang$core$Time$every, 250 * _elm_lang$core$Time$millisecond, _user$project$Main$Tick)
+					A2(_elm_lang$core$Time$every, 75 * _elm_lang$core$Time$millisecond, _user$project$Main$Tick)
 				]));
 	}
 };
